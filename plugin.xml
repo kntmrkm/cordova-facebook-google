@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-oauth-login" version="1.0.0">
+  <name>Oauth Login</name>
+  <description>Oauth Login : Facebook, LINE</description>
+  <repo>https://github.com/kntmrkm/cordova-oauth-login</repo>
+  <license>Apache 2.0</license>
+
+  <js-module src="www/facebook-native.js" name="FacebookConnectPlugin">
+    <clobbers target="facebookConnectPlugin" />
+  </js-module>
+  <js-module src="www/GooglePlus.js" name="GooglePlus">
+    <clobbers target="window.plugins.googleplus" />
+  </js-module>
+
+  <preference name="FB_APP_ID" />
+  <preference name="FB_APP_NAME" />
+  <preference name="LINE_CHANNEL_ID" />
+  <preference name="PRODUCT_BUNDLE_IDENTIFIER" />
+
+  <!-- android -->
+  <platform name="android">
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="FacebookConnectPlugin">
+        <param name="android-package" value="org.apache.cordova.facebook.ConnectPlugin" />
+        <param name="onload" value="true" />
+      </feature>
+      <access origin="https://m.facebook.com" />
+      <access origin="https://graph.facebook.com" />
+      <access origin="https://api.facebook.com" />
+      <access origin="https://*.fbcdn.net" />
+      <access origin="https://*.akamaihd.net" />
+      <preference name="android-minSdkVersion" value="19" />
+      
+      <feature name="GooglePlus">
+        <param name="android-package" value="nl.xservices.plugins.GooglePlus" />
+        <param name="onload" value="true" />
+      </feature>
+      <access origin="https://accounts.google.com/*" />
+    </config-file>
+
+    <source-file src="src/android/facebookconnect.xml" target-dir="res/values" />
+    <config-file target="res/values/facebookconnect.xml" parent="/*">
+      <string name="fb_app_id">$FB_APP_ID</string>
+      <string name="fb_app_name">$FB_APP_NAME</string>
+    </config-file>
+    <config-file parent="/resources" target="./res/values/strings.xml">
+      <string name="fb_app_id">$FB_APP_ID</string>
+      <string name="fb_app_name">$FB_APP_NAME</string>
+    </config-file>
+
+    <config-file target="AndroidManifest.xml" parent="application">
+      <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/fb_app_id"/>
+      <meta-data android:name="com.facebook.sdk.ApplicationName" android:value="@string/fb_app_name" />
+      <activity android:name="com.facebook.FacebookActivity"
+        android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+        android:label="@string/fb_app_name" />
+      <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+      <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    </config-file>
+    <config-file target="AndroidManifest.xml" parent="/*">
+      <uses-permission android:name="android.permission.INTERNET" />
+    </config-file>
+
+    <framework src="com.facebook.android:facebook-android-sdk:4.+"/>
+    <framework src="com.google.android.gms:play-services-auth:11.8.0" />
+    <framework src="com.google.android.gms:play-services-identity:11.8.0" />
+    <!-- cordova plugin src files -->
+    <source-file src="src/android/ConnectPlugin.java" target-dir="src/org/apache/cordova/facebook" />
+    <source-file src="src/android/GooglePlus.java" target-dir="src/nl/xservices/plugins"/>
+  </platform>
+
+  <!-- ios -->
+  <platform name="ios">
+    <config-file target="config.xml" parent="/*">
+      <feature name="FacebookConnectPlugin">
+        <param name="ios-package" value="FacebookConnectPlugin"/>
+        <param name="onload" value="true" />
+      </feature>
+      <plugin name="FacebookConnectPlugin" value="FacebookConnectPlugin"/>
+      <access origin="https://m.facebook.com" />
+      <access origin="https://graph.facebook.com" />
+      <access origin="https://api.facebook.com" />
+      <access origin="https://*.fbcdn.net" />
+      <access origin="https://*.akamaihd.net" />
+
+      <feature name="GooglePlus">
+        <param name="ios-package" value="GooglePlus"/>
+        <param name="onload" value="true" />
+      </feature>
+      <access origin="https://accounts.google.com/*" />
+    </config-file>
+
+    <config-file target="*-Info.plist" parent="FacebookAppID">
+        <string>$FB_APP_ID</string>
+    </config-file>
+    <config-file target="*-Info.plist" parent="FacebookDisplayName">
+        <string>$FB_APP_NAME</string>
+    </config-file>
+    <config-file target="*-Info.plist" parent="CFBundleURLTypes">
+      <array>
+        <dict>
+          <key>CFBundleURLSchemes</key>
+          <array>
+            <string>fb$FB_APP_ID</string>
+            <string>line3rdp.$PRODUCT_BUNDLE_IDENTIFIER</string>
+          </array>
+          <key>CFBundleTypeRole</key>
+          <string>Editor</string>
+        </dict>
+      </array>
+    </config-file>
+    <config-file target="*-Info.plist" parent="CFBundleURLTypes">
+      <array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLName</key>
+            <string>REVERSED_CLIENT_ID</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>$REVERSED_CLIENT_ID</string>
+            </array>
+        </dict>
+      </array>
+    </config-file>
+
+    <config-file target="*-Info.plist" parent="NSAppTransportSecurity">
+      <dict>
+        <key>NSExceptionDomains</key>
+        <dict>
+            <key>facebook.com</key>
+            <dict>
+              <key>NSIncludesSubdomains</key>
+              <true/>
+              <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+              <false/>
+            </dict>
+            <key>fbcdn.net</key>
+            <dict>
+              <key>NSIncludesSubdomains</key>
+              <true/>
+              <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+              <false/>
+            </dict>
+            <key>akamaihd.net</key>
+            <dict>
+              <key>NSIncludesSubdomains</key>
+              <true/>
+              <key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+              <false/>
+            </dict>
+        </dict>
+      </dict>
+    </config-file>
+
+    <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
+      <array>
+        <string>fbapi</string>
+        <string>fb-messenger-api</string>
+        <string>fbauth2</string>
+        <string>fbshareextension</string>
+      </array>
+    </config-file>
+
+    <header-file src="src/ios/AppDelegate+OauthLogin.h" />
+    <source-file src="src/ios/AppDelegate+OauthLogin.m" />
+    <header-file src="src/ios/FacebookConnectPlugin.h" />
+    <source-file src="src/ios/FacebookConnectPlugin.m" />
+    <header-file src="src/ios/GooglePlus.h"/>
+    <source-file src="src/ios/GooglePlus.m"/>
+
+    <!-- Bolts framework -->
+    <framework src="src/ios/Bolts.framework" custom="true" />
+
+    <!-- Facebook framework -->
+    <framework src="src/ios/AccountKit.framework" custom="true" />
+    <framework src="src/ios/FBNotifications.framework" custom="true" />
+    <framework src="src/ios/FBSDKCoreKit.framework" custom="true" />
+    <framework src="src/ios/FBSDKLoginKit.framework" custom="true" />
+    <framework src="src/ios/FBSDKMessengerShareKit.framework" custom="true" />
+    <framework src="src/ios/FBSDKPlacesKit.framework" custom="true" />
+    <framework src="src/ios/FBSDKShareKit.framework" custom="true" />
+
+    <!-- Google frameworks -->
+    <!-- Downloaded here: https://developers.google.com/identity/sign-in/ios/sdk/ (changelog: https://developers.google.com/identity/sign-in/ios/release) -->
+    <framework src="src/ios/libs/GoogleAppUtilities.framework" custom="true" />
+    <framework src="src/ios/libs/GoogleAuthUtilities.framework" custom="true" />
+    <framework src="src/ios/libs/GoogleNetworkingUtilities.framework" custom="true" />
+    <framework src="src/ios/libs/GoogleSignIn.framework" custom="true" />
+    <framework src="src/ios/libs/GoogleSymbolUtilities.framework" custom="true" />
+    <framework src="src/ios/libs/GoogleUtilities.framework" custom="true" />
+
+    <!-- System frameworks for google -->
+    <framework src="AddressBook.framework" weak="true" />
+    <framework src="CoreText.framework" weak="true" />
+    <framework src="SafariServices.framework" weak="true" />
+    <framework src="Security.framework" weak="true" />
+    <framework src="SystemConfiguration.framework" weak="true" />
+    <framework src="libz.tbd" weak="true" />
+    <framework src="libz.dylib" weak="true" />
+
+    <hook type="after_plugin_install" src="hooks/ios/prerequisites.js"/>
+    <hook type="after_plugin_install" src="hooks/ios/install_entitlements.js" />
+    
+    <preference name="REVERSED_CLIENT_ID" />
+  </platform>
+</plugin>
