@@ -2,7 +2,7 @@
 //  AppDelegate+OauthLogin.h
 //  OauthLogin
 //
-//  Created by 村上 健太 on 2018/03/11.
+//  Created by 村上 健太 on 2018/08/22.
 //
 
 #import "AppDelegate.h"
@@ -12,7 +12,7 @@
 
 @end
 
-@interface AppDelegate (LineLogin)
+@interface AppDelegate (GooglePlus)
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary *)options;
 
 @end

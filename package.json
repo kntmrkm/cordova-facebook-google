@@ -13,12 +13,6 @@
     "type": "git",
     "url": "https://github.com/kntmrkm/cordova-facebook-google"
   },
-  "keywords": [
-    "cordova",
-    "social",
-    "facebook",
-    "facebook-sdk",
-    
-  ],
+  "keywords": [],
   "license": "Apache-2.0"
 }

@@ -2,12 +2,13 @@
 //  AppDelegate+OauthLogin.m
 //  OauthLogin
 //
-//  Created by 村上 健太 on 2018/03/11.
+//  Created by 村上 健太 on 2018/08/22.
 //
 
 #import "AppDelegate+OauthLogin.h"
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
-#import <LineSDK/LineSDK.h>
+#import <GoogleSignIn/GoogleSignIn.h>
+#import "GooglePlus.h"
 
 @implementation AppDelegate (FacebookConnectPlugin)
 
@@ -22,7 +23,17 @@ options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
                         ];
         return handled;
     } else {
-        return [[LineSDKLogin sharedInstance] handleOpenURL:url];
+        BOOL handled = false;
+        GooglePlus* gp = (GooglePlus*) [self.viewController pluginObjects][@"GooglePlus"];
+        
+        if ([gp isSigningIn]) {
+            gp.isSigningIn = NO;
+            handled = [[GIDSignIn sharedInstance]
+                       handleURL:url
+                       sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+                       annotation:options[UIApplicationOpenURLOptionsAnnotationKey]];
+        }
+        return handled;
     }
 }
 @end
